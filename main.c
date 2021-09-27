@@ -23,8 +23,8 @@ int main(void){
 
 void TWI_START(unsigned char bitrate){
 	TWBR = 0x00;
-	TWBR = bitrate; 									///< Set the division factor of bitrate generator.
-	TWCR = (1<<TWEN)|(1<<TWINT)|(1<<TWSTA); 			///< Enable TWI and set TWINT bit to 1. Send START condition.
+	TWBR = bitrate; 							///< Set the division factor of bitrate generator.
+	TWCR = (1<<TWEN)|(1<<TWINT)|(1<<TWSTA); 				///< Enable TWI and set TWINT bit to 1. Send START condition.
 	while(!(TWCR & (1<<TWINT)));						///< Wait while TWI completes current action.
 	while((TWSR & 0xF8) != 0x08); 						///< Wait while ACK bit is received after START condition is transmitted.
 }
@@ -36,13 +36,13 @@ void TWI_START(unsigned char bitrate){
 
 void TWI_ADDRESS(unsigned char address){
 	while(1){
-		TWDR = address; 									///< Load slave device's address to SDA.
-		TWCR = (1<<TWEN)|(1<<TWINT);						///< Enable TWI and set TWINT bit to 1.
-		while(!(TWCR & (1<<TWINT)));						///< Wait while TWI completes current action.
+		TWDR = address; 						///< Load slave device's address to SDA.
+		TWCR = (1<<TWEN)|(1<<TWINT);					///< Enable TWI and set TWINT bit to 1.
+		while(!(TWCR & (1<<TWINT)));					///< Wait while TWI completes current action.
 		if((TWSR & 0xF8) != 0x18){
-			continue;										///< If ACK has not been received, repeat the loop.
+			continue;						///< If ACK has not been received, repeat the loop.
 		}
-		break;												///< If ACK has been received break from loop.
+		break;								///< If ACK has been received break from loop.
 	}
 }
 
@@ -53,11 +53,11 @@ void TWI_ADDRESS(unsigned char address){
 
 void MASTER_SEND(char *data){
 	for(uint8_t i=0;data[i]!=0;i++){
-		TWDR = data[i]; 								///< Load data to TWDR register to be transmitted.
+		TWDR = data[i]; 						///< Load data to TWDR register to be transmitted.
 		TWCR = (1<<TWEN)|(1<<TWINT);					///< Enable TWI and set TWINT bit to 1.					
 		while(!(TWCR & (1<<TWINT)));					///< Wait while TWI completes current action.
 		if((TWSR & 0xF8) != 0x28){
-			break;										///< If ACK has not been received stop sending data.
+			break;							///< If ACK has not been received stop sending data.
 		}
 	}
 }
@@ -67,5 +67,5 @@ void MASTER_SEND(char *data){
  */
 
 void TWI_STOP(void){
-	TWCR = (1<<TWEN)|(1<<TWINT)|(1<<TWSTO); 			///< Enable TWI and set TWINT bit to 1. Send STOP condition.
+	TWCR = (1<<TWEN)|(1<<TWINT)|(1<<TWSTO); 				///< Enable TWI and set TWINT bit to 1. Send STOP condition.
 }
